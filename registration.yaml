@@ -4,9 +4,9 @@ info:
   version: 2.0.0
 
 paths:
-  /register:
+  /users:
     post:
-      operationId: register
+      operationId: addUser
       tags:
         - user
       description: Register to have access to our system
@@ -15,23 +15,7 @@ paths:
         content:
           application/json:
             schema:
-              properties:
-                firstName:
-                  type: string
-                  example: John
-                lastName:
-                  type: string
-                  example: Doe
-                dob:
-                  type: string
-                  format: date-time
-                  example: '2000-07-09T19:44:13.720Z'
-                phone:
-                  type: string
-                  example: '07032543523'
-                email:
-                  type: string
-                  example: "joh.doe@test.com"
+              $ref: "#/components/schemas/UserRequest"
 
       responses:
         "200":
@@ -39,17 +23,70 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  id:
-                    type: number
-                  firstName:
-                    type: string
-                  lastName:
-                    type: string
-                  dob:
-                    type: string
-                    format: date-time
-                  phone:
-                    type: string
-                  email:
-                    type: string
+                $ref: "#/components/schemas/UserResponse"
+
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This is request is not allowed
+
+
+    get:
+      operationId: getAllUsers
+      description: Return the list of registered users
+      responses:
+        "200":
+          description: returns the list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      description: Details to create a new user
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        dob:
+          type: string
+          format: date-time
+          example: '2000-07-09T19:44:13.720Z'
+        phone:
+          type: string
+          example: '07032543523'
+        email:
+          type: string
+          example: "joh.doe@test.com"
+
+    UserResponse:
+      type: object
+      description: User detail response
+      properties:
+        id:
+          type: number
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dob:
+          type: string
+          format: date-time
+        phone:
+          type: string
+        email:
+          type: string
+
+
