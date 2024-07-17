@@ -33,7 +33,7 @@ paths:
         "405":
           description: This is request is not allowed
     get:
-      operationId: list
+      operationId: getAllUsers
       tags:
         - UserResource
       description: Return the list of registered users
@@ -53,7 +53,7 @@ paths:
 
   /users/{id}:
     get:
-      operationId: view
+      operationId: getUserById
       tags:
         - UserResource
       description: Returns a single user information
