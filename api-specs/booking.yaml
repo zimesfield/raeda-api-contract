@@ -18,7 +18,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ParcelDeliveryRequest"
+              $ref: "#/components/schemas/DeliveryRequest"
 
       responses:
         "200":
@@ -26,7 +26,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ParcelDeliveryResponse"
+                $ref: "#/components/schemas/DeliveryResponse"
 
         "403":
           description: You do not have access to this resource
@@ -45,7 +45,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ParcelDeliveryResponse"
+                  $ref: "#/components/schemas/DeliveryResponse"
         "400":
           description: Request is empty
         "405":
@@ -73,7 +73,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ParcelDeliveryResponse"
+                  $ref: "#/components/schemas/DeliveryResponse"
         "400":
           description: Request is empty
         "405":
@@ -106,7 +106,7 @@ components:
           format: date-time
 
 
-    ParcelDeliveryResponse:
+    DeliveryResponse:
       type: object
       description: Delivery parcel type
       required:
@@ -132,7 +132,7 @@ components:
           format: date-time
 
 
-    ParcelActivityHistory:
+    DeliveryHistory:
       type: object
       description: Delivery parcel type
       properties:
@@ -146,7 +146,7 @@ components:
             - DELIVERED
           default: PROCESSING
         parcel:
-          $ref: '#/components/schemas/ParcelDeliveryResponse'
+          $ref: '#/components/schemas/DeliveryResponse'
         description:
           type: string
           example: Request received for delivery
