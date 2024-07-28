@@ -100,10 +100,10 @@ components:
           $ref: '#/components/schemas/Priority'
         pickupDate:
           type: string
-          format: date-time
+          format: LocalDateTime
         deliveryDate:
           type: string
-          format: date-time
+          format: LocalDateTime
 
 
     DeliveryResponse:
@@ -126,10 +126,10 @@ components:
           $ref: '#/components/schemas/Priority'
         pickupDate:
           type: string
-          format: date-time
+          format: LocalDateTime
         deliveryDate:
           type: string
-          format: date-time
+          format: LocalDateTime
 
 
     DeliveryHistory:
