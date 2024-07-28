@@ -4,14 +4,14 @@ info:
   version: 1.0.0
 
 tags:
-  - name: BookingResource
+  - name: DeliveryResource
     description: Booking information
 paths:
   /booking:
     post:
       operationId: request
       tags:
-        - BookingResource
+        - DeliveryResource
       description: Request for a shipment booking
       requestBody:
         description: Request information and destination detail
@@ -35,7 +35,7 @@ paths:
     get:
       operationId: getBookings
       tags:
-        - BookingResource
+        - DeliveryResource
       description: Return the list of booking for a logged in user
       responses:
         "200":
@@ -55,7 +55,7 @@ paths:
     get:
       operationId: getBookingDetail
       tags:
-        - BookingResource
+        - DeliveryResource
       description: Returns a single user information
       parameters:
         - name: uuid
