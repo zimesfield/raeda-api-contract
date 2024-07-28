@@ -1,18 +1,18 @@
 openapi: "3.0.0"
 info:
-  title: Booking Contract
+  title: Delivery Contract
   version: 1.0.0
 
 tags:
   - name: DeliveryResource
-    description: Booking information
+    description: Delivery information
 paths:
-  /booking:
+  /delivery:
     post:
       operationId: request
       tags:
         - DeliveryResource
-      description: Request for a shipment booking
+      description: Request for a shipment delivery
       requestBody:
         description: Request information and destination detail
         content:
@@ -33,13 +33,13 @@ paths:
         "405":
           description: This is request is not allowed
     get:
-      operationId: getBookings
+      operationId: getDeliveries
       tags:
         - DeliveryResource
-      description: Return the list of booking for a logged in user
+      description: Return the list of deliveries for a logged in user
       responses:
         "200":
-          description: returns the list of users booking details
+          description: returns the list of users deliveries details
           content:
             application/json:
               schema:
@@ -51,16 +51,16 @@ paths:
         "405":
           description: Not allowed to make this request
 
-  /booking/{uuid}:
+  /delivery/{uuid}:
     get:
-      operationId: getBookingDetail
+      operationId: getDelivery
       tags:
         - DeliveryResource
       description: Returns a single user information
       parameters:
         - name: uuid
           in: path
-          description: the uuid of the booking to view
+          description: the uuid of the delivery to view
           schema:
             type: integer
             format: int64
@@ -273,7 +273,7 @@ components:
 
     DeliveryRequest:
       type: object
-      description: Booking request details
+      description: Delivery request details
       required:
         - firstName
         - lastName
