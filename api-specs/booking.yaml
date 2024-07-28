@@ -1,0 +1,293 @@
+openapi: "3.0.0"
+info:
+  title: Booking Contract
+  version: 1.0.0
+
+tags:
+  - name: BookingResource
+    description: Booking information
+paths:
+  /booking:
+    post:
+      operationId: request
+      tags:
+        - BookingResource
+      description: Request for a shipment booking
+      requestBody:
+        description: Request information and destination detail
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParcelDeliveryRequest"
+
+      responses:
+        "200":
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParcelDeliveryResponse"
+
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This is request is not allowed
+    get:
+      operationId: getBookings
+      tags:
+        - BookingResource
+      description: Return the list of booking for a logged in user
+      responses:
+        "200":
+          description: returns the list of users booking details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ParcelDeliveryResponse"
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+  /booking/{uuid}:
+    get:
+      operationId: getBookingDetail
+      tags:
+        - BookingResource
+      description: Returns a single user information
+      parameters:
+        - name: uuid
+          in: path
+          description: the uuid of the booking to view
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        "200":
+          description: returns the list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ParcelDeliveryResponse"
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+components:
+  schemas:
+    ParcelDeliveryRequest:
+      type: object
+      description: Delivery parcel type
+      required:
+        - sender
+        - receiver
+        - items
+      properties:
+        sender:
+          $ref: '#/components/schemas/Customer'
+        receiver:
+          $ref: '#/components/schemas/Customer'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        pickupDate:
+          type: string
+          format: date-time
+        deliveryDate:
+          type: string
+          format: date-time
+
+
+    ParcelDeliveryResponse:
+      type: object
+      description: Delivery parcel type
+      required:
+        - items
+      properties:
+        uuid:
+          type: string
+        sender:
+          $ref: '#/components/schemas/Customer'
+        receiver:
+          $ref: '#/components/schemas/Customer'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        pickupDate:
+          type: string
+          format: date-time
+        deliveryDate:
+          type: string
+          format: date-time
+
+
+    ParcelActivityHistory:
+      type: object
+      description: Delivery parcel type
+      properties:
+        activity:
+          type: string
+          enum:
+            - PROCESSING
+            - PICKUP
+            - PACKAGING
+            - SHIPPING
+            - DELIVERED
+          default: PROCESSING
+        parcel:
+          $ref: '#/components/schemas/ParcelDeliveryResponse'
+        description:
+          type: string
+          example: Request received for delivery
+
+    Item:
+      type: object
+      description: Delivery parcel type
+      required:
+        - name
+        - weight
+        - quantity
+      properties:
+        name:
+          type: string
+          example: Laptop
+        weight:
+          $ref: '#/components/schemas/Weight'
+        quantity:
+          type: number
+          example: 5
+        description:
+          type: string
+          example: Hp Laptops 2024
+
+    Weight:
+      type: object
+      description: Weight of parcel
+      required:
+        - mass
+        - measurement
+      properties:
+        mass:
+          type: number
+          example: 14.0
+        measurement:
+          type: string
+          enum:
+            - kg
+            - g
+          default: kg
+
+    Priority:
+      type: object
+      description: Priority of delivery
+      properties:
+        express:
+          type: boolean
+          default: false
+          example: true
+        pickup:
+          type: boolean
+          default: true
+          example: true
+
+    Address:
+      type: object
+      description: Customer information
+      required:
+        - country
+        - state
+        - area
+        - street
+        - landmark
+      properties:
+        country:
+          type: string
+          default: Nigeria
+          example: Nigeria
+        state:
+          type: string
+          example: Lagos
+        area:
+          type: string
+          example: Eti Osa
+        street:
+          type: string
+          example: 5 Aiyetoro street, Ajah
+        landmark:
+          type: string
+          example: Ajah market
+
+    Contact:
+      type: object
+      description: Customer contact information
+      required:
+        - phoneNumber
+      properties:
+        phoneNumber:
+          type: string
+          example: '0904653622'
+        alternatePhoneNumber:
+          type: string
+          example: '0904353652'
+        email:
+          type: string
+          example: john.doe@raeda.com
+    BioData:
+      type: object
+      description: User BioData
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+    Customer:
+      type: object
+      description: Customer information
+      required:
+        - bioData
+        - contact
+        - address
+      properties:
+        bioData:
+          $ref: '#/components/schemas/BioData'
+        contact:
+          $ref: '#/components/schemas/Contact'
+        address:
+          $ref: '#/components/schemas/Address'
+
+    DeliveryRequest:
+      type: object
+      description: Booking request details
+      required:
+        - firstName
+        - lastName
+        - phone
+        - email
+      properties:
+        senderInfo:
+          $ref: '#/components/schemas/Customer'
+        receiverInfo:
+          $ref: '#/components/schemas/Customer'
+        parcelType:
+          type: string
+          enum:
+            - Document
+            - Parcel
+
+
