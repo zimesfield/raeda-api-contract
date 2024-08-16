@@ -2,7 +2,11 @@ openapi: "3.0.0"
 info:
   title: Delivery Contract
   version: 1.0.0
-
+security:
+  - oauth: [ jhipster, email, profile ]
+  - openId: [ jhipster, email, profile ]
+servers:
+  - url: http://localhost:8082/api
 tags:
   - name: DeliveryResource
     description: Delivery information
@@ -19,7 +23,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/DeliveryRequest"
-
       responses:
         "200":
           description: Registration was successful
@@ -27,43 +30,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeliveryResponse"
-
         "403":
           description: You do not have access to this resource
         "405":
           description: This is request is not allowed
+
     get:
       operationId: getDeliveries
       tags:
         - DeliveryResource
       description: Return the list of deliveries for a logged in user
+      parameters:
+        - name: pageable
+          in: query
+          description: the pagination information.
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
       responses:
         "200":
-          description: returns the list of users deliveries details
+          description: get all users with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/DeliveryResponse"
+                  $ref: '#/components/schemas/DeliveryResponse'
+
         "400":
           description: Request is empty
         "405":
           description: Not allowed to make this request
 
-  /delivery/{uuid}:
+  /delivery/{deliveryId}:
     get:
       operationId: getDelivery
       tags:
         - DeliveryResource
       description: Returns a single user information
       parameters:
-        - name: uuid
+        - name: deliveryId
           in: path
           description: the uuid of the delivery to view
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
           required: true
       responses:
         "200":
@@ -71,16 +85,59 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/DeliveryResponse"
+                $ref: "#/components/schemas/DeliveryResponse"
         "400":
           description: Request is empty
         "405":
           description: Not allowed to make this request
+
 components:
+  headers:
+    PageResponse:
+      schema:
+        title: PageResponse
+        type: object
+        properties:
+          totalPages:
+            type: integer
+          totalElements:
+            type: integer
+            format: int32
+          size:
+            type: integer
+            example: 10
+          pageNumber:
+            type: integer
+            example: 0
   schemas:
-    ParcelDeliveryRequest:
+    Pageable:
+      title: Pageable
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          example: 20
+          description: Size of the requested page
+        pageNumber:
+          type: integer
+          example: 0
+          description: Page number of the requested page
+        sort:
+          type: string
+          example: "uuid, asc"
+          description: |
+            Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+
+    DeliveryResponsePage:
+      description: Delivery response page
+      title: DeliveryResponsePage
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryResponse'
+    DeliveryRequest:
       type: object
       description: Delivery parcel type
       required:
@@ -98,21 +155,23 @@ components:
             $ref: '#/components/schemas/Item'
         priority:
           $ref: '#/components/schemas/Priority'
-        pickupDate:
+        amount:
+          $ref: '#/components/schemas/EstimatedAmount'
+        deliveryType:
           type: string
-          format: LocalDateTime
-        deliveryDate:
-          type: string
-          format: LocalDateTime
-
-
+          example: Document
+          enum:
+            - Document
+            - Parcel
     DeliveryResponse:
       type: object
       description: Delivery parcel type
       required:
         - items
+        - sender
+        - receiver
       properties:
-        uuid:
+        deliveryId:
           type: string
         sender:
           $ref: '#/components/schemas/Customer'
@@ -130,7 +189,8 @@ components:
         deliveryDate:
           type: string
           format: LocalDateTime
-
+        deliveryType:
+          type: string
 
     DeliveryHistory:
       type: object
@@ -151,6 +211,17 @@ components:
           type: string
           example: Request received for delivery
 
+    EstimatedAmount:
+      type: object
+      description: Delivery parcel type
+      properties:
+        currency:
+          type: string
+          example: NGN
+        value:
+          type: number
+          format: int64
+
     Item:
       type: object
       description: Delivery parcel type
@@ -159,6 +230,9 @@ components:
         - weight
         - quantity
       properties:
+        uuid:
+          type: string
+          format: uuid
         name:
           type: string
           example: Laptop
@@ -190,7 +264,7 @@ components:
 
     Priority:
       type: object
-      description: Priority of delivery
+      description: DeliveryPriority of delivery
       properties:
         express:
           type: boolean
@@ -203,7 +277,7 @@ components:
 
     Address:
       type: object
-      description: Customer information
+      description: CustomerModel information
       required:
         - country
         - state
@@ -230,7 +304,7 @@ components:
 
     Contact:
       type: object
-      description: Customer contact information
+      description: CustomerModel contact information
       required:
         - phoneNumber
       properties:
@@ -245,7 +319,7 @@ components:
           example: john.doe@raeda.com
     BioData:
       type: object
-      description: User BioData
+      description: UserModel BioData
       required:
         - firstName
         - lastName
@@ -258,7 +332,7 @@ components:
           example: Doe
     Customer:
       type: object
-      description: Customer information
+      description: CustomerModel information
       required:
         - bioData
         - contact
@@ -271,23 +345,37 @@ components:
         address:
           $ref: '#/components/schemas/Address'
 
-    DeliveryRequest:
+    UserInfo:
       type: object
       description: Delivery request details
-      required:
-        - firstName
-        - lastName
-        - phone
-        - email
       properties:
-        senderInfo:
-          $ref: '#/components/schemas/Customer'
-        receiverInfo:
-          $ref: '#/components/schemas/Customer'
-        parcelType:
+        id:
           type: string
-          enum:
-            - Document
-            - Parcel
+        login:
+          type: string
 
+  responses:
+    Problem:
+      description: error occurred - see status code and problem object for more information.
+      content:
+        'application/problem+json':
+          schema:
+            $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
+
+  securitySchemes:
+    oauth:
+      type: oauth2
+      description: OAuth2 authentication with KeyCloak
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/auth
+          tokenUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/token
+          scopes:
+            jhipster: Jhipster specific claims
+            email: Email claims
+            profile: Profile claims
+    openId:
+      type: openIdConnect
+      description: OpenID Connect authentication with KeyCloak
+      openIdConnectUrl: http://localhost:9080/realms/jhipster/.well-known/openid-configuration
 
