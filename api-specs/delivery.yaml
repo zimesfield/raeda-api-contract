@@ -34,6 +34,9 @@ paths:
           description: You do not have access to this resource
         "405":
           description: This is request is not allowed
+      security:
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
 
     get:
       operationId: getDeliveries
@@ -64,6 +67,10 @@ paths:
           description: Request is empty
         "405":
           description: Not allowed to make this request
+
+      security:
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
 
   /delivery/{deliveryId}:
     get:
