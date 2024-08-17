@@ -11,7 +11,7 @@ tags:
   - name: DeliveryResource
     description: Delivery information
 paths:
-  /delivery:
+  /deliveries:
     post:
       operationId: request
       tags:
@@ -72,7 +72,7 @@ paths:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
 
-  /delivery/{deliveryId}:
+  /deliveries/{deliveryId}:
     get:
       operationId: getDelivery
       tags:
