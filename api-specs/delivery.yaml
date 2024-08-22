@@ -97,6 +97,26 @@ paths:
           description: Request is empty
         "405":
           description: Not allowed to make this request
+  /deliveries/count:
+    get:
+      operationId: deliveryCount
+      tags:
+        - DeliveryResource
+      description: Returns a total count of delivery based on a user
+      responses:
+        "200":
+          description: returns count of of delivery
+          content:
+            application/json:
+              schema:
+                title: DeliveryCount
+                type: integer
+                format: int64
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
 
 components:
   headers:
