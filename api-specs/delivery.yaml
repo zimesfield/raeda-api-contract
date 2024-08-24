@@ -3,13 +3,17 @@ info:
   title: Delivery Contract
   version: 1.0.0
 security:
-  - oauth: [ jhipster, email, profile ]
-  - openId: [ jhipster, email, profile ]
+  -   oauth: [ jhipster, email, profile ]
+  -   openId: [ jhipster, email, profile ]
 servers:
-  - url: http://localhost:8082/api
+  -   url: http://localhost:8082/api
 tags:
-  - name: DeliveryResource
-    description: Delivery information
+  -   name: DeliveryResource
+      description: Book delivery Request
+  -   name: BookingResource
+      description: Manage Booking
+  -   name: AreaResource
+      description: Area Resource Information
 paths:
   /deliveries:
     post:
@@ -35,8 +39,8 @@ paths:
         "405":
           description: This is request is not allowed
       security:
-        - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
 
     get:
       operationId: getDeliveries
@@ -44,12 +48,12 @@ paths:
         - DeliveryResource
       description: Return the list of deliveries for a logged in user
       parameters:
-        - name: pageable
-          in: query
-          description: the pagination information.
-          required: true
-          schema:
-            $ref: '#/components/schemas/Pageable'
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
       responses:
         "200":
           description: get all users with all the details - calling this are only allowed for the administrators.
@@ -69,23 +73,57 @@ paths:
           description: Not allowed to make this request
 
       security:
-        - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
 
   /deliveries/{deliveryId}:
+    put:
+      operationId: updateDelivery
+      tags:
+        - DeliveryResource
+      description: Modify delivery information
+      parameters:
+        -   name: deliveryId
+            in: path
+            description: the uuid of the delivery to view
+            schema:
+              type: string
+              format: uuid
+            required: true
+      requestBody:
+        description: Request information and destination detail
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeliveryRequest"
+      responses:
+        "200":
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeliveryResponse"
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This request is not allowed
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
     get:
       operationId: getDelivery
       tags:
         - DeliveryResource
       description: Returns a single user information
       parameters:
-        - name: deliveryId
-          in: path
-          description: the uuid of the delivery to view
-          schema:
-            type: string
-            format: uuid
-          required: true
+        -   name: deliveryId
+            in: path
+            description: the uuid of the delivery to view
+            schema:
+              type: string
+              format: uuid
+            required: true
       responses:
         "200":
           description: returns the list of users
@@ -112,9 +150,172 @@ paths:
                 title: DeliveryCount
                 type: integer
                 format: int64
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+  #    /deliveries/{delivery}/status:
+  #        put:
+  #            operationId: activate
+  #            tags:
+  #                - DeliveryResource
+  #            description: Returns a total count of delivery based on a user
+  #            parameters:
+  #                -   name: deliveryId
+  #                    in: path
+  #                    description: the uuid of the delivery to view
+  #                    schema:
+  #                        type: string
+  #                        format: uuid
+  #                    required: true
+  #            requestBody:
+  #                description: Request information and destination detail
+  #                content:
+  #                    application/json:
+  #                        schema:
+  #                            $ref: "#/components/schemas/DeliveryRequest"
+  #
+  #            responses:
+  #                "200":
+  #                    description: returns total delivery
+  #                    content:
+  #                        application/json:
+  #                            schema:
+  #                                title: DeliveryCount
+  #                                type: integer
+  #                                format: int64
+  #
+  #                "400":
+  #                    description: Request is empty
+  #                "405":
+  #                    description: Not allowed to make this request
+  /area/pricing:
+    get:
+      operationId: getAreaPricing
+      tags:
+        - AreaResource
+      description: Returns list of Area Pricing
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AreaPriceResponse'
 
         "400":
           description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /bookings:
+    get:
+      operationId: getBookings
+      tags:
+        - BookingResource
+      description: Returns list of confirmed booking
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all bookings with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /bookings/{deliveryId}/confirm:
+    post:
+      operationId: confirmBooking
+      tags:
+        - BookingResource
+      description: Confirm delivery request when a user
+      parameters:
+        -   name: deliveryId
+            in: path
+            description: the uuid of the delivery to view
+            schema:
+              type: string
+              format: uuid
+            required: true
+      requestBody:
+        description: Request information and destination detail
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingConfirmation"
+      responses:
+        "201":
+          description: Created successful booking that has been paid for.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /bookings/count:
+    get:
+      operationId: bookingsCount
+      tags:
+        - BookingResource
+      description: Returns a total count of delivery based on a user
+      responses:
+        "200":
+          description: total confirmed booking
+          content:
+            application/json:
+              schema:
+                title: DeliveryCount
+                type: integer
+                format: int64
+        "400":
+          description: Request is empty
+        "403":
+          description: Not authorized request
         "405":
           description: Not allowed to make this request
 
@@ -182,8 +383,6 @@ components:
             $ref: '#/components/schemas/Item'
         priority:
           $ref: '#/components/schemas/Priority'
-        amount:
-          $ref: '#/components/schemas/EstimatedAmount'
         deliveryType:
           type: string
           example: Document
@@ -210,6 +409,51 @@ components:
             $ref: '#/components/schemas/Item'
         priority:
           $ref: '#/components/schemas/Priority'
+        amount:
+          $ref: '#/components/schemas/Amount'
+
+    BookingConfirmation:
+      type: object
+      description: Delivery parcel type
+      required:
+        - deliveryId
+        - amount
+        - pickupDate
+        - deliveryDate
+      properties:
+        deliveryId:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+        pickupDate:
+          type: string
+          format: LocalDateTime
+        deliveryDate:
+          type: string
+          format: LocalDateTime
+
+    BookingResponse:
+      type: object
+      description: Approved booking
+      required:
+        - items
+        - sender
+        - receiver
+      properties:
+        deliveryId:
+          type: string
+        sender:
+          $ref: '#/components/schemas/Customer'
+        receiver:
+          $ref: '#/components/schemas/Customer'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        priority:
+          $ref: '#/components/schemas/Priority'
+        amount:
+          $ref: '#/components/schemas/Amount'
         pickupDate:
           type: string
           format: LocalDateTime
@@ -218,11 +462,15 @@ components:
           format: LocalDateTime
         deliveryType:
           type: string
+        status:
+          $ref: '#/components/schemas/BookingStatus'
 
-    DeliveryHistory:
+    BookingHistory:
       type: object
       description: Delivery parcel type
       properties:
+        deliveryId:
+          type: string
         activity:
           type: string
           enum:
@@ -238,7 +486,7 @@ components:
           type: string
           example: Request received for delivery
 
-    EstimatedAmount:
+    Amount:
       type: object
       description: Delivery parcel type
       properties:
@@ -249,6 +497,56 @@ components:
           type: number
           format: int64
 
+    AreaPriceResponse:
+      type: object
+      description: AreaPrice
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        senderArea:
+          type: integer
+        receiverArea:
+          type: integer
+        currency:
+          type: integer
+        amount:
+          type: number
+    Payment:
+      type: object
+      description: Payment for delivery
+      properties:
+        deliveryId:
+          type: string
+        totalAmount:
+          $ref: "#/components/schemas/Amount"
+        paymentMode:
+          $ref: "#/components/schemas/PaymentMode"
+
+    PaymentMode:
+      type: string
+      description: Booking status
+      properties:
+        mode:
+          type: string
+          enum:
+            - TRANSFER
+            - CARD
+            - CHEQUE
+            - CASH
+    BookingStatus:
+      type: string
+      description: Booking status
+      properties:
+        status:
+          type: string
+          enum:
+            - PROCESSING
+            - SHIPPING
+            - DELIVERED
+
     Item:
       type: object
       description: Delivery parcel type
@@ -257,6 +555,9 @@ components:
         - weight
         - quantity
       properties:
+        id:
+          type: integer
+          format: int64
         uuid:
           type: string
           format: uuid
@@ -322,6 +623,9 @@ components:
         area:
           type: string
           example: Eti Osa
+        areaCode:
+          type: integer
+          example: 1
         street:
           type: string
           example: 5 Aiyetoro street, Ajah
