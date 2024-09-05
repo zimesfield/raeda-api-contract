@@ -141,6 +141,22 @@ paths:
       tags:
         - DeliveryResource
       description: Returns a total count of delivery based on a user
+      parameters:
+        -   name: period
+            in: query
+            description: the uuid of the delivery to view
+            schema:
+              type: string
+              example: DAY
+            required: true
+        -   name: date
+            in: query
+            description: the date format for delivery count
+            schema:
+              type: string
+              format: date-time
+              example: 2024-08-24T14:30:00Z
+            required: true
       responses:
         "200":
           description: returns count of of delivery
@@ -224,6 +240,66 @@ paths:
         -   oauth: [ jhipster, email, profile ]
         -   openId: [ jhipster, email, profile ]
 
+  /payments:
+    post:
+      operationId: logPayment
+      tags:
+        - PaymentResource
+      description: Log payment information with the transaction Id
+      requestBody:
+        description: Details of the payment information
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentDetail"
+      responses:
+        "200":
+          description: Payment logged successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This is request is not allowed
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+    get:
+      operationId: getPayments
+      tags:
+        - PaymentsResource
+      description: Returns list of confirmed booking
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all payments with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
   /bookings:
     get:
       operationId: getBookings
@@ -303,6 +379,22 @@ paths:
       tags:
         - BookingResource
       description: Returns a total count of delivery based on a user
+      parameters:
+        -   name: period
+            in: query
+            description: the uuid of the delivery to view
+            schema:
+              type: string
+              example: DAY
+            required: true
+        -   name: date
+            in: query
+            description: bookings start date to count
+            schema:
+              type: string
+              format: date-time
+              example: 2024-08-24T14:30:00Z
+            required: true
       responses:
         "200":
           description: total confirmed booking
@@ -352,7 +444,7 @@ components:
           description: Page number of the requested page
         sort:
           type: string
-          example: "uuid, asc"
+          example: "id,asc"
           description: |
             Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
 
@@ -380,7 +472,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/Item'
+            $ref: '#/components/schemas/ItemRequest'
         priority:
           $ref: '#/components/schemas/Priority'
         deliveryType:
@@ -389,6 +481,7 @@ components:
           enum:
             - Document
             - Parcel
+            - HEAVY
     DeliveryResponse:
       type: object
       description: Delivery parcel type
@@ -406,7 +499,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/Item'
+            $ref: '#/components/schemas/ItemResponse'
         priority:
           $ref: '#/components/schemas/Priority'
         amount:
@@ -416,42 +509,30 @@ components:
       type: object
       description: Delivery parcel type
       required:
-        - deliveryId
-        - amount
+        - transactionId
         - pickupDate
         - deliveryDate
       properties:
-        deliveryId:
+        transactionId:
           type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
+          example: "TestTransactionId"
         pickupDate:
           type: string
           format: LocalDateTime
+          example: 2024-08-24T14:30
         deliveryDate:
           type: string
           format: LocalDateTime
+          example: 2024-08-25T14:30
 
     BookingResponse:
       type: object
-      description: Approved booking
-      required:
-        - items
-        - sender
-        - receiver
+      description: Confirmed booking
       properties:
         deliveryId:
           type: string
-        sender:
-          $ref: '#/components/schemas/Customer'
-        receiver:
-          $ref: '#/components/schemas/Customer'
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Item'
-        priority:
-          $ref: '#/components/schemas/Priority'
+        transactionId:
+          type: string
         amount:
           $ref: '#/components/schemas/Amount'
         pickupDate:
@@ -460,8 +541,6 @@ components:
         deliveryDate:
           type: string
           format: LocalDateTime
-        deliveryType:
-          type: string
         status:
           $ref: '#/components/schemas/BookingStatus'
 
@@ -514,6 +593,10 @@ components:
           type: integer
         amount:
           type: number
+        expressAmount:
+          type: number
+        pickupAmount:
+          type: number
     Payment:
       type: object
       description: Payment for delivery
@@ -524,18 +607,65 @@ components:
           $ref: "#/components/schemas/Amount"
         paymentMode:
           $ref: "#/components/schemas/PaymentMode"
+    PaymentDetail:
+      type: object
+      description: Payment information for delivery
+      required:
+        - deliveryId
+        - transactionId
+        - totalAmount
+        - paymentMode
+      properties:
+        deliveryId:
+          type: string
+          example: ReplaceMe
+        transactionId:
+          type: string
+          example: TestTransactionId
+        totalAmount:
+          $ref: "#/components/schemas/Amount"
+        paymentMode:
+          $ref: "#/components/schemas/PaymentMode"
+
+    PaymentResponse:
+      type: object
+      description: Payment information for delivery
+      required:
+        - deliveryId
+        - transactionId
+        - totalAmount
+        - paymentMode
+      properties:
+        deliveryId:
+          type: string
+        transactionId:
+          type: string
+        totalAmount:
+          $ref: "#/components/schemas/Amount"
+        paymentMode:
+          $ref: "#/components/schemas/PaymentMode"
+        createdAt:
+          type: string
+          format: LocalDateTime
 
     PaymentMode:
       type: string
       description: Booking status
+      required:
+        - mode
       properties:
+        agentId:
+          type: string
         mode:
           type: string
+          default: TRANSFER
+          example: TRANSFER
           enum:
             - TRANSFER
             - CARD
             - CHEQUE
             - CASH
+
     BookingStatus:
       type: string
       description: Booking status
@@ -547,7 +677,29 @@ components:
             - SHIPPING
             - DELIVERED
 
-    Item:
+    ItemRequest:
+      type: object
+      description: Delivery parcel type
+      required:
+        - name
+        - weight
+        - quantity
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Laptop
+        weight:
+          $ref: '#/components/schemas/Weight'
+        quantity:
+          type: number
+          example: 5
+        description:
+          type: string
+          example: Hp Laptops 2024
+    ItemResponse:
       type: object
       description: Delivery parcel type
       required:
@@ -586,9 +738,9 @@ components:
         measurement:
           type: string
           enum:
-            - kg
-            - g
-          default: kg
+            - KG
+            - G
+          default: KG
 
     Priority:
       type: object
