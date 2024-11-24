@@ -12,8 +12,14 @@ tags:
       description: Book delivery Request
   -   name: BookingResource
       description: Manage Booking
-  -   name: AreaResource
-      description: Area Resource Information
+  -   name: CurrencyResource
+      description: Manage Currency
+  -   name: AreasPricingResource
+      description: Area Resource Pricing Information
+  -   name: LocationResource
+      description: Location Resource Information
+  -   name: PaymentResource
+      description: Payment Resource Information
 paths:
   /deliveries:
     post:
@@ -205,11 +211,168 @@ paths:
   #                    description: Request is empty
   #                "405":
   #                    description: Not allowed to make this request
-  /area/pricing:
-    get:
-      operationId: getAreaPricing
+
+  /areas:
+    post:
+      operationId: createArea
       tags:
         - AreaResource
+      description: Create Area
+      requestBody:
+        description: The new area to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaRequest'
+      responses:
+        "200":
+          description: get all area with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getAreas
+      tags:
+        - LocationResource
+      description: Returns list of Area
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all area with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AreaResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+  /areas/{id}:
+    put:
+      operationId: editArea
+      tags:
+        - AreaResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the area to edit
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Modify Area
+      requestBody:
+        description: Modified Area to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaRequest'
+      responses:
+        "200":
+          description: get all area with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getArea
+      tags:
+        - AreaResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the currency to view
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Returns Area Pricing with id
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /pricing:
+    post:
+      operationId: createAreaPricing
+      tags:
+        - AreasPricingResource
+      description: Create Area Pricing
+      requestBody:
+        description: The new area price to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaPriceRequest'
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaPriceResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getAreaPricings
+      tags:
+        - AreasPricingResource
       description: Returns list of Area Pricing
       parameters:
         -   name: pageable
@@ -239,6 +402,194 @@ paths:
       security:
         -   oauth: [ jhipster, email, profile ]
         -   openId: [ jhipster, email, profile ]
+  /pricing/{id}:
+    put:
+      operationId: editAreaPricing
+      tags:
+        - PricingResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the area price to edit
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Modify Area Pricing
+      requestBody:
+        description: Modified Area Price to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaPriceRequest'
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaPriceResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getAreaPricing
+      tags:
+        - PricingResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the currency to view
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Returns Area Pricing with id
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaPriceResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /currencies:
+    get:
+      operationId: getCurrencies
+      tags:
+        - CurrencyResource
+      description: Returns list of currency
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all currency with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrencyResponse'
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /currencies/{id}:
+    get:
+      operationId: getCurrencyById
+      tags:
+        - CurrencyResource
+      description: Modify currency information
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the currency to view
+            schema:
+              type: integer
+              format: int64
+            required: true
+      responses:
+        "200":
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrencyResponse"
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This request is not allowed
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /currencies/code/{currencyCode}:
+    put:
+      operationId: updateCurrency
+      tags:
+        - CurrencyResource
+      description: Modify currency information
+      parameters:
+        -   name: currencyCode
+            in: path
+            description: the international code of the currency to view
+            schema:
+              type: string
+            required: true
+      requestBody:
+        description: Request information and destination detail
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CurrencyRequest"
+      responses:
+        "200":
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrencyResponse"
+        "403":
+          description: You do not have access to this resource
+        "405":
+          description: This request is not allowed
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+    get:
+      operationId: getCurrency
+      tags:
+        - CurrencyResource
+      description: Returns a single currency information
+      parameters:
+        -   name: currencyCode
+            in: path
+            description: the international code of the currency to view
+            schema:
+              type: string
+            required: true
+      responses:
+        "200":
+          description: returns currency that matches the uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrencyResponse"
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
 
   /payments:
     post:
@@ -576,6 +927,47 @@ components:
           type: number
           format: int64
 
+    Area:
+      type: object
+      description: Area of a state
+      properties:
+        name:
+          type: string
+          example: Eti Osa
+        code:
+          type: string
+          example: "0871"
+
+    AreaPriceRequest:
+      type: object
+      description: AreaPriceRequest
+      required:
+        - senderArea
+        - receiverArea
+        - description
+        - currency
+        - amount
+        - expressAmount
+        - pickupAmount
+      properties:
+        id:
+          type: integer
+          format: int64
+        description:
+          type: string
+        senderArea:
+          $ref: '#/components/schemas/Area'
+        receiverArea:
+          $ref: '#/components/schemas/Area'
+        currency:
+          $ref: '#/components/schemas/CurrencyResponse'
+        amount:
+          type: number
+        expressAmount:
+          type: number
+        pickupAmount:
+          type: number
+
     AreaPriceResponse:
       type: object
       description: AreaPrice
@@ -586,17 +978,39 @@ components:
         description:
           type: string
         senderArea:
-          type: integer
+          $ref: '#/components/schemas/Area'
         receiverArea:
-          type: integer
+          $ref: '#/components/schemas/Area'
         currency:
-          type: integer
+          $ref: '#/components/schemas/CurrencyResponse'
         amount:
           type: number
         expressAmount:
           type: number
         pickupAmount:
           type: number
+    CurrencyRequest:
+      type: object
+      description: CurrencyRequest
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+    CurrencyResponse:
+      type: object
+      description: CurrencyResponse
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: integer
+          format: int64
+        code:
+          type: string
+        name:
+          type: string
     Payment:
       type: object
       description: Payment for delivery
@@ -649,13 +1063,11 @@ components:
           format: LocalDateTime
 
     PaymentMode:
-      type: string
+      type: object
       description: Booking status
       required:
         - mode
       properties:
-        agentId:
-          type: string
         mode:
           type: string
           default: TRANSFER
@@ -665,6 +1077,34 @@ components:
             - CARD
             - CHEQUE
             - CASH
+
+    AreaRequest:
+      type: object
+      description: Raeda Express coverage area
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+          example: Asaba
+        code:
+          type: string
+          example: ASA
+    AreaResponse:
+      type: object
+      description: Raeda Express coverage area response
+      properties:
+        id:
+          type: number
+          example: 223
+        name:
+          type: string
+          example: Asaba
+        code:
+          type: string
+          example: ASA
+
 
     BookingStatus:
       type: string
@@ -773,11 +1213,7 @@ components:
           type: string
           example: Lagos
         area:
-          type: string
-          example: Eti Osa
-        areaCode:
-          type: integer
-          example: 1
+          $ref: '#/components/schemas/Area'
         street:
           type: string
           example: 5 Aiyetoro street, Ajah
