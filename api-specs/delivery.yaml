@@ -8,16 +8,20 @@ security:
 servers:
   -   url: http://localhost:8082/api
 tags:
+  -   name: CurrencyResource
+      description: Manage Currency
+  -   name: AreaResource
+      description: Area Resource Information
+  -   name: RegionResource
+      description: Region Resource Information
+  -   name: CountryResource
+      description: Country Resource Information
+  -   name: PricingResource
+      description: Area Resource Pricing Information
   -   name: DeliveryResource
       description: Book delivery Request
   -   name: BookingResource
       description: Manage Booking
-  -   name: CurrencyResource
-      description: Manage Currency
-  -   name: AreasPricingResource
-      description: Area Resource Pricing Information
-  -   name: LocationResource
-      description: Location Resource Information
   -   name: PaymentResource
       description: Payment Resource Information
 paths:
@@ -243,7 +247,7 @@ paths:
     get:
       operationId: getAreas
       tags:
-        - LocationResource
+        - AreaResource
       description: Returns list of Area
       parameters:
         -   name: pageable
@@ -602,7 +606,7 @@ paths:
     post:
       operationId: createAreaPricing
       tags:
-        - AreasPricingResource
+        - PricingResource
       description: Create Area Pricing
       requestBody:
         description: The new area price to be added
@@ -629,7 +633,7 @@ paths:
     get:
       operationId: getAreaPricings
       tags:
-        - AreasPricingResource
+        - PricingResource
       description: Returns list of Area Pricing
       parameters:
         -   name: pageable
@@ -878,7 +882,7 @@ paths:
     get:
       operationId: getPayments
       tags:
-        - PaymentsResource
+        - PaymentResource
       description: Returns list of confirmed booking
       parameters:
         -   name: pageable
@@ -1343,6 +1347,8 @@ components:
         - code
         - province
       properties:
+        id:
+          type: number
         name:
           type: string
           example: Asaba
@@ -1376,6 +1382,8 @@ components:
         - code
         - currency
       properties:
+        id:
+          type: number
         name:
           type: string
           example: Nigeria
@@ -1410,6 +1418,8 @@ components:
         - code
         - country
       properties:
+        id:
+          type: number
         name:
           type: string
           example: DELTA
