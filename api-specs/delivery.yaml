@@ -425,14 +425,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AreaRequest'
+              $ref: '#/components/schemas/CountryRequest'
       responses:
         "200":
           description: get all area with all the details - calling this are only allowed for the administrators.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AreaResponse'
+                $ref: '#/components/schemas/CountryResponse'
 
         "400":
           description: Request is empty
