@@ -340,6 +340,263 @@ paths:
       security:
         -   oauth: [ jhipster, email, profile ]
         -   openId: [ jhipster, email, profile ]
+  /countries:
+    post:
+      operationId: createCountry
+      tags:
+        - CountryResource
+      description: Create Country
+      requestBody:
+        description: The new area to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CountryRequest'
+      responses:
+        "200":
+          description: get all country with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: fetchCountries
+      tags:
+        - CountryResource
+      description: Returns list of countries
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all area with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+  /countries/{id}:
+    put:
+      operationId: editCountry
+      tags:
+        - CountryResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the area to edit
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Modify Area
+      requestBody:
+        description: Modified Area to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaRequest'
+      responses:
+        "200":
+          description: get all area with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getCountry
+      tags:
+        - CountryResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the currency to view
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Returns Country Pricing with id
+      responses:
+        "200":
+          description: get all area pricing with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+
+  /regions:
+    post:
+      operationId: createRegion
+      tags:
+        - RegionResource
+      description: Create Region
+      requestBody:
+        description: The new area to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+      responses:
+        "200":
+          description: get all regions with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getRegions
+      tags:
+        - RegionResource
+      description: Returns list of region
+      parameters:
+        -   name: pageable
+            in: query
+            description: the pagination information.
+            required: true
+            schema:
+              $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: get all regions with all the details - calling this are only allowed for the administrators.
+          headers:
+            pageable:
+              $ref: '#/components/headers/PageResponse'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegionResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+  /regions/{id}:
+    put:
+      operationId: editRegion
+      tags:
+        - RegionResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the region to edit
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Modify Region
+      requestBody:
+        description: Modified Region to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+      responses:
+        "200":
+          description: get all region with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
+    get:
+      operationId: getRegion
+      tags:
+        - RegionResource
+      parameters:
+        -   name: id
+            in: path
+            description: the id of the region to view
+            schema:
+              type: integer
+              format: int64
+            required: true
+
+      description: Returns region with id
+      responses:
+        "200":
+          description: get all regions with all the details - calling this are only allowed for the administrators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+
+        "400":
+          description: Request is empty
+        "405":
+          description: Not allowed to make this request
+
+      security:
+        -   oauth: [ jhipster, email, profile ]
+        -   openId: [ jhipster, email, profile ]
 
   /pricing:
     post:
@@ -1084,11 +1341,15 @@ components:
       required:
         - name
         - code
+        - province
       properties:
         name:
           type: string
           example: Asaba
         code:
+          type: string
+          example: ASA
+        province:
           type: string
           example: ASA
     AreaResponse:
@@ -1100,11 +1361,83 @@ components:
           example: 223
         name:
           type: string
-          example: Asaba
+          example: Owerri
         code:
           type: string
-          example: ASA
+          example: OWR
+        province:
+          type: string
+          example: IMO
 
+    CountryRequest:
+      type: object
+      description: Raeda Express coverage country
+      required:
+        - name
+        - code
+        - currency
+      properties:
+        name:
+          type: string
+          example: Nigeria
+        code:
+          type: string
+          example: NG
+        currency:
+          type: string
+          example: NGN
+    CountryResponse:
+      type: object
+      description: Raeda Express coverage country response
+      properties:
+        id:
+          type: number
+          example: 223
+        name:
+          type: string
+          example: Nigeria
+        code:
+          type: string
+          example: NG
+        currency:
+          type: string
+          example: NGN
+
+
+    RegionRequest:
+      type: object
+      description: Raeda Express coverage region
+      required:
+        - name
+        - code
+        - country
+      properties:
+        name:
+          type: string
+          example: DELTA
+        code:
+          type: string
+          example: DEL
+        country:
+          type: string
+          example: NG
+
+    RegionResponse:
+      type: object
+      description: Raeda Express coverage region response
+      properties:
+        id:
+          type: number
+          example: 223
+        name:
+          type: string
+          example: DELTA
+        code:
+          type: string
+          example: DEL
+        country:
+          type: string
+          example: NG
 
     BookingStatus:
       type: string
