@@ -1399,8 +1399,7 @@ components:
           type: string
           example: NG
         currency:
-          type: string
-          example: NGN
+          $ref: "#/components/schemas/CurrencyResponse"
 
 
     RegionRequest:
