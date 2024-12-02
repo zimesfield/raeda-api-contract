@@ -1350,8 +1350,8 @@ components:
           type: string
           example: ASA
         province:
-          type: string
-          example: ASA
+          $ref: "#/components/schemas/RegionResponse"
+
     AreaResponse:
       type: object
       description: Raeda Express coverage area response
@@ -1366,8 +1366,7 @@ components:
           type: string
           example: OWR
         province:
-          type: string
-          example: IMO
+          $ref: "#/components/schemas/RegionResponse"
 
     CountryRequest:
       type: object
@@ -1384,8 +1383,8 @@ components:
           type: string
           example: NG
         currency:
-          type: string
-          example: NGN
+          $ref: "#/components/schemas/CurrencyResponse"
+
     CountryResponse:
       type: object
       description: Raeda Express coverage country response
@@ -1419,8 +1418,7 @@ components:
           type: string
           example: DEL
         country:
-          type: string
-          example: NG
+          $ref: "#/components/schemas/CountryResponse"
 
     RegionResponse:
       type: object
@@ -1436,8 +1434,7 @@ components:
           type: string
           example: DEL
         country:
-          type: string
-          example: NG
+          $ref: "#/components/schemas/CountryResponse"
 
     BookingStatus:
       type: string
