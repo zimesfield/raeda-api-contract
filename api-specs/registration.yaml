@@ -107,6 +107,12 @@ components:
         email:
           type: string
           example: "joh.doe@test.com"
+        username:
+          type: string
+          example: "cyker"
+        password:
+          type: string
+          example: "@dkcyker123"
 
     UserResponse:
       type: object
@@ -125,5 +131,11 @@ components:
           type: string
         email:
           type: string
+        username:
+          type: string
+          example: "cyker"
+        password:
+          type: string
+          example: "@dkcyker123"
 
 
