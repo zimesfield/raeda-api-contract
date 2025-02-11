@@ -6,7 +6,37 @@ info:
 tags:
   - name: UserResource
     description: User information
+  - name: RegistrationResource
+    description: Register new account
 paths:
+  /register:
+    post:
+      operationId: register
+      tags:
+        - RegistrationResource
+      description: Register to have access to our system
+      requestBody:
+        description: Input your information that will be submitted
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrationRequest"
+
+      responses:
+        "200":
+          description: Registration was successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationResponse"
+
+        "403":
+          description: You do not have access to this resource
+        "404":
+          description: Registration failed!
+        "405":
+          description: This is request is not allowed
+
   /users:
     post:
       operationId: addUser
@@ -82,6 +112,31 @@ paths:
 
 components:
   schemas:
+    RegistrationRequest:
+      type: object
+      description: Registration Information
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: "joh.doe@test.com"
+        password:
+          type: string
+          example: "@dkcyker123"
+
+    RegistrationResponse:
+      type: object
+      description: Registration Information
+      properties:
+        activationUrl:
+          type: string
+          example: 'http://localhost:8082?activationCode=1234'
+        activationCode:
+          type: string
+          example: "1234567"
+
     UserRequest:
       type: object
       description: Details to create a new user
@@ -90,6 +145,8 @@ components:
         - lastName
         - phone
         - email
+        - username
+        - password
       properties:
         firstName:
           type: string
