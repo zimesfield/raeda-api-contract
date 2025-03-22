@@ -1,0 +1,1302 @@
+openapi: 3.0.1
+info:
+  title: YCP OLMPH User API Contract
+  description: 'This is the user contract for registration.  You can find out more about OLMPH
+    at [https://ycpolmphajah.com](https://ycpolmphajah.com).'
+  termsOfService: 'https://swagger.io/terms/'
+  contact:
+    email: comenuko@zimesfield.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 1.0.0
+servers:
+  - url: '{protocol}://{environment}'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      environment:
+        default: localhost:8081    # Local server
+        enum:
+          - localhost:8081
+          - api         # Production server
+          - api.dev     # Development server
+          - api.staging # Staging server
+
+tags:
+  - name: user-jwt-resource
+    description: Login user
+  - name: user-resource
+    description: Operations about user
+    externalDocs:
+      description: Find out more about our stock
+      url: https://swagger.io
+
+paths:
+  /api/authenticate:
+    post:
+      tags:
+        - user-jwt-resource
+      summary: login and generate jwt.
+      operationId: authorize
+      requestBody:
+        description: Login detail
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtToken'
+        400:
+          description: Invalid username supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+
+  /api/admin/users/{login}:
+    get:
+      tags:
+        - user-resource
+      summary: get the "login" user
+      operationId: getUser
+      parameters:
+        - name: login
+          in: path
+          description: the login of the user to find
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        400:
+          description: Invalid username/password supplied
+          content: { }
+    delete:
+      tags:
+        - user-resource
+      summary: delete the "login" User
+      operationId: deleteUser
+      parameters:
+        - name: login
+          in: path
+          description: the login of the user to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        400:
+          description: Invalid username/password supplied
+          content: { }
+  /api/activate:
+    get:
+      tags:
+        - account-resource
+      summary: Activate a registered user
+      operationId: activateAccount
+      parameters:
+        - name: key
+          in: query
+          description: 'The activation key'
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content: { }
+        400:
+          description: Invalid key supplied
+          content: { }
+
+  /api/authenticated:
+    get:
+      tags:
+        - account-resource
+      summary: check if the user is authenticated, and return its login.
+      operationId: isAuthenticated
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Invalid username supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+  /api/account:
+    get:
+      tags:
+        - account-resource
+      summary: Get the current user
+      operationId: getAccount
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+    post:
+      tags:
+        - account-resource
+      summary: The current user information
+      operationId: saveAccount
+      requestBody:
+        description: Updated user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUserRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+  /api/register:
+    post:
+      tags:
+        - account-resource
+      summary: Managed User Registration
+      operationId: registerAccount
+      requestBody:
+        description: register the user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+  /api/account/change-password:
+    post:
+      tags:
+        - account-resource
+      summary: The current user information
+      operationId: changePassword
+      requestBody:
+        description: Updated user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+  /api/account/reset-password/init:
+    post:
+      tags:
+        - account-resource
+      summary: Send an email to reset the password of the user
+      operationId: requestPasswordReset
+      requestBody:
+        description: The mail of the user
+        content:
+          application/json:
+            schema:
+              type: string
+              example: test@test.com
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+  /api/account/reset-password/finish:
+    post:
+      tags:
+        - account-resource
+      summary: Finish to reset the password of the user
+      operationId: finishPasswordReset
+      requestBody:
+        description: The generated key and the new password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyAndPasswordRequest'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: { }
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+  /api/booking:
+    post:
+      tags:
+        - booking-resource
+      summary: Manage Booking
+      operationId: book
+      requestBody:
+        description: book an activity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequest'
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        400:
+          description: Invalid user supplied
+          content: { }
+        404:
+          description: User not found
+          content: { }
+      security:
+        - OAuth2:
+            - scope_detail_user
+
+
+components:
+  schemas:
+    LoginRequest:
+      title: LoginRequest
+      type: object
+      properties:
+        username:
+          type: string
+          example: 'admin'
+        password:
+          type: string
+          example: 'admin'
+        rememberMe:
+          type: boolean
+          example: true
+      required:
+        - username
+        - password
+    JwtToken:
+      title: JwtToken
+      type: object
+      properties:
+        id_token:
+          type: string
+    ParishRegistrationRequest:
+      title: ParishRegistrationRequest
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: 'olmph'
+        member:
+          $ref: '#/components/schemas/Member'
+        account:
+          $ref: '#/components/schemas/Account'
+      required:
+        - requestId
+        - member
+        - account
+
+    ParishRegistrationResponse:
+      title: ParishRegistrationResponse
+      type: object
+      properties:
+        uuid:
+          type: string
+        requestId:
+          type: string
+        customer:
+          $ref: '#/components/schemas/Member'
+        account:
+          $ref: '#/components/schemas/Account'
+        status:
+          type: string
+
+    ParishRegistrationResponsePage:
+      title: AccountRegistrationResponsePage
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParishRegistrationResponse'
+        pageable:
+          $ref: '#/components/schemas/PageResponse'
+
+    PageRequest:
+      title: PageRequest
+      type: object
+      properties:
+        size:
+          type: integer
+          example: 10
+        pageNumber:
+          type: integer
+          example: 0
+        sort:
+          type: string
+          example: "uuid, asc"
+    PageResponse:
+      title: PageResponse
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          example: 10
+        pageNumber:
+          type: integer
+          example: 0
+
+    OrderRequest:
+      type: object
+      properties:
+        orderedItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderedItem'
+        userId:
+          type: string
+          format: base64
+        address:
+          $ref: '#/components/schemas/Address'
+    OrderResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        orderedItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderedItem'
+        userId:
+          type: string
+          format: base64
+        orderedOn:
+          type: string
+          format: date-time
+        address:
+          $ref: '#/components/schemas/Address'
+        complete:
+          type: boolean
+          default: false
+        status:
+          type: string
+          description: status of order
+          enum:
+            - placed
+            - accepted
+            - delivered
+            - canceled
+            - deleted
+    OrderedItem:
+      required:
+        - productId
+        - quantity
+        - account
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        uuid:
+          type: string
+          format: base64
+        productId:
+          type: string
+          format: base64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - received
+            - processing
+            - transit
+            - completed
+            - deleted
+        complete:
+          type: boolean
+          default: false
+    CategoryRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Home & Office
+        description:
+          type: string
+          example: This is Home & Office
+    CategoryResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          description: category status in the stock
+          enum:
+            - enabled
+            - deleted
+            - suspended
+
+    TagRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: NEW
+        description:
+          type: string
+          example: This are new products
+    TagResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          description: category status in the stock
+          enum:
+            - enabled
+            - deleted
+            - suspended
+
+    Address:
+      type: object
+      required:
+        - houseNumber
+        - street
+        - area
+        - state
+      properties:
+        houseNumber:
+          type: string
+          example: 123
+        street:
+          type: string
+          example: My street is here
+        area:
+          type: string
+          example: eti-osa
+        state:
+          type: string
+          example: Lagos
+        country:
+          type: string
+          example: Nigeria
+
+    ContactInfo:
+      type: object
+      required:
+        - email
+        - phone
+        - address
+      properties:
+        email:
+          type: string
+          example: test@test
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          $ref: '#/components/schemas/Address'
+    PasswordChangeRequest:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          example: test@123
+        newPassword:
+          type: string
+          example: 123@test
+    KeyAndPasswordRequest:
+      type: object
+      required:
+        - key
+        - newPassword
+      properties:
+        key:
+          type: string
+          example: test@123
+        newPassword:
+          type: string
+          example: 123@test
+    EmailResetRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: admin@admin
+    UserRequest:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+        - email
+        - password
+        - phone
+        - address
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+        password:
+          type: string
+          example: qazwsx
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          $ref: '#/components/schemas/Address'
+        authorities:
+          type: array
+          items:
+            type: string
+        userStatus:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+
+    BookingRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - phone
+        - address
+      properties:
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        married:
+          type: string
+          enum:
+            - married
+            - single
+            - divorced
+        spouseName:
+          type: string
+          example: Obie
+        children:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+          example: test@test
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          $ref: '#/components/schemas/Address'
+    BookingResponse:
+      type: object
+      properties:
+        accountId:
+          type: string
+          example: 12345678
+        phone:
+          type: string
+          example: 07012345678
+
+    PublicUserResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        login:
+          type: string
+          example: omens
+
+    AdminUserResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+        imageUrl:
+          type: string
+          example: qazwsx
+        phone:
+          type: string
+          example: 07012345678
+        activated:
+          type: string
+          example: true
+        createdBy:
+          type: string
+          example: omens
+        createdDate:
+          type: string
+          example: "2021-09-07"
+        lastModifiedBy:
+          type: string
+          example: omens
+        lastModifiedDate:
+          type: string
+          example: "2021-09-07"
+        address:
+          $ref: '#/components/schemas/Address'
+        authorities:
+          type: array
+          items:
+            type: string
+        userStatus:
+          type: string
+          enum:
+            - active
+            - inactive
+            - deleted
+            - suspended
+    AdminUserRequest:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+        - email
+        - password
+        - phone
+        - address
+      properties:
+        uuid:
+          type: string
+          format: base64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+        imageUrl:
+          type: string
+          example: qazwsx
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          $ref: '#/components/schemas/Address'
+        authorities:
+          type: array
+          items:
+            type: string
+        userStatus:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+    UserResponse:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+        - email
+        - password
+        - phone
+        - address
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+        password:
+          type: string
+          example: qazwsx
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          $ref: '#/components/schemas/Address'
+        authorities:
+          type: array
+          items:
+            type: string
+        userStatus:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+    Member:
+      type: object
+      required:
+        - username
+        - firstName
+        - lastName
+        - password
+        - personalContact
+      properties:
+        firstName:
+          type: string
+          example: Omens
+        middleName:
+          type: string
+          example: Cyker
+        lastName:
+          type: string
+          example: Odinaka
+        username:
+          type: string
+          example: omens
+        password:
+          type: string
+          example: cWF6d3N4
+          format: base64
+        gender:
+          $ref: "#/components/schemas/Gender"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatus"
+    Gender:
+      type: string
+      enum:
+        - male
+        - female
+      example: male
+    MaritalStatus:
+      type: string
+      enum:
+        - single
+        - married
+        - divorced
+      example: married
+
+    ProductRequest:
+      required:
+        - brandId
+        - promotionIds
+        - categoryId
+        - name
+        - description
+        - detail
+        - weight
+        - price
+      type: object
+      properties:
+        categoryId:
+          type: string
+          format: base64
+          example: b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
+        promotionIds:
+          type: array
+          items:
+            type: string
+            format: base64
+          example:
+            - b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: base64
+          example:
+            - b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
+        brandId:
+          type: string
+          format: base64
+          example: b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
+        name:
+          type: string
+          example: Milo
+        code:
+          type: string
+          example: 12345
+        weight:
+          type: number
+          format: float
+          example: 10.2
+        price:
+          $ref: "#/components/schemas/Money"
+        description:
+          type: string
+          example: "Electronics product"
+        detail:
+          type: string
+          example: "This is a more elaborate information"
+        photoUrls:
+          type: array
+          items:
+            type: string
+
+    ProductResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        category:
+          $ref: '#/components/schemas/CategoryResponse'
+        promotions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromotionResponse'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponse'
+        brand:
+          $ref: '#/components/schemas/BrandResponse'
+        name:
+          type: string
+          example: Zimes
+        code:
+          type: string
+          example: qazwsx
+        weight:
+          type: number
+          format: float
+          example: 10.2
+        price:
+          $ref: "#/components/schemas/Money"
+        description:
+          type: string
+          example: "Electronics product"
+        detail:
+          type: string
+          example: "This is a more elaborate information"
+        photoUrls:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          description: pet status in the stock
+          enum:
+            - available
+            - deleted
+            - pending
+            - new
+            - sold
+            - banned
+            - out-of-stock
+    BrandRequest:
+      required:
+        - name
+        - description
+      type: object
+      properties:
+        name:
+          type: string
+          example: LG
+        description:
+          type: string
+          example: "Type of a brand"
+    BrandResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        name:
+          type: string
+          example: LG
+        description:
+          type: string
+          example: "Type of a brand"
+        status:
+          type: string
+          description: pet status in the stock
+          enum:
+            - deleted
+            - enabled
+            - suspended
+    Money:
+      type: object
+      properties:
+        currency:
+          type: string
+          maximum: 3
+          minimum: 3
+          enum:
+            - NGN
+            - GBP
+            - USD
+          example: NGN
+        value:
+          type: number
+          format: Double
+          example: 10.2
+
+    PromotionRequest:
+      required:
+        - name
+        - description
+        - price
+        - startDate
+        - endDate
+      type: object
+      properties:
+        name:
+          type: string
+          example: "3k Shop"
+        description:
+          type: string
+          example: "Promotion for 3K  purchases"
+        price:
+          $ref: "#/components/schemas/Money"
+        startDate:
+          type: string
+          #          format: date
+          example: "2021-07-12"
+        endDate:
+          type: string
+          #          format: date
+          example: "2025-07-12"
+        flatRate:
+          type: boolean
+          example: false
+
+    PromotionResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        name:
+          type: string
+          example: "3k Shop"
+        description:
+          type: string
+          example: "Promotion for 3K  purchases"
+        price:
+          $ref: "#/components/schemas/Money"
+        start:
+          type: string
+          format: date
+          example: "02/02/2020"
+        end:
+          type: string
+          format: date
+          example: "02/02/2020"
+        flatRate:
+          type: boolean
+          example: false
+        status:
+          type: string
+          description: pet status in the stock
+          enum:
+            - deleted
+            - enabled
+            - suspended
+    Account:
+      title: Account
+      type: object
+      properties:
+        name:
+          type: string
+          example: "OLMPH"
+        description:
+          type: string
+          example: "Our Lady Mother Of Perpetual Help"
+        address:
+          $ref: '#/components/schemas/Address'
+        contact:
+          $ref: '#/components/schemas/Contact'
+      required:
+        - name
+
+    Contact:
+      title: Contact
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'cyp@packam.com'
+        phone:
+          type: string
+          example: '+23470987654321'
+      required:
+        - email
+        - phone
+
+    StockRequest:
+      required:
+        - name
+        - productId
+        - quantity
+        - attributes
+        - flow
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Jeans Red"
+        description:
+          type: string
+          example: "Gucci Red Jeans"
+        productId:
+          type: string
+          format: base64
+          example: 68a68962-4a12-42c1-9a63-d77440cfc976
+        quantity:
+          type: integer
+          example: 10
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+        flow:
+          type: string
+          description: determines whether to add or deduct stock
+          enum:
+            - in
+            - out
+        status:
+          type: string
+          description: stock status in the stock
+          enum:
+            - none
+            - low
+            - available
+
+    StockResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+          example: 68a68962-4a12-42c1-9a63-d77440cfc976
+        name:
+          type: string
+          example: "Jeans Red"
+        description:
+          type: string
+        productId:
+          type: string
+          format: base64
+          example: 68a68962-4a12-42c1-9a63-d77440cfc976
+        quantity:
+          type: integer
+          example: 10
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+        flow:
+          type: string
+          description: determines whether to add or deduct stock
+          enum:
+            - in
+            - out
+        status:
+          type: string
+          description: stock status in the stock
+          enum:
+            - none
+            - low
+            - available
+            - deleted
+
+    Attribute:
+      type: object
+      properties:
+        name:
+          type: string
+          example: red
+        type:
+          type: string
+          example: color
+        description:
+          type: string
+          example: The red colour of product
+
+    CommonResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+
+
+
+  responses:
+    Problem:
+      description: error occurred - see status code and problem object for more information.
+      content:
+        'application/problem+json':
+          schema:
+            $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
+
+  securitySchemes:
+    jwt:
+      type: http
+      description: JWT Authentication
+      scheme: bearer
+      bearerFormat: JWT
+    basic:
+      type: http
+      description: Basic Authentication
+      scheme: basic
+security:
+  - jwt: []
+  - basic: []
