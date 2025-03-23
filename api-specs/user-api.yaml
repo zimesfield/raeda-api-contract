@@ -502,6 +502,42 @@ components:
             - inactive
             - suspended
 
+    RegistrationRequest:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+        - email
+        - password
+        - phone
+        - address
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+        password:
+          type: string
+          example: qazwsx
+        phone:
+          type: string
+          example: 07012345678
+        address:
+          type: string
+          example: 5 Zimesfield Street, Lagos
+
     PublicUserResponse:
       type: object
       properties:
