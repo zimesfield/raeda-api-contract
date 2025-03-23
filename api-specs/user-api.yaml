@@ -27,6 +27,8 @@ servers:
           - api.staging # Staging server
 
 tags:
+  - name: register-resource
+    description: Registration for user
   - name: account-resource
     description: Login user
   - name: user-resource
@@ -54,10 +56,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUserResponse'
+                $ref: '#/components/schemas/UserResponse'
         400:
           description: Invalid username/password supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
@@ -79,10 +84,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUserResponse'
+                $ref: '#/components/schemas/UserResponse'
         400:
           description: Invalid username/password supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
@@ -103,10 +111,16 @@ paths:
       responses:
         200:
           description: successful operation
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
         400:
           description: Invalid key supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
 
   /api/authenticated:
     get:
@@ -123,10 +137,16 @@ paths:
                 type: string
         400:
           description: Invalid username supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
         404:
           description: User not found
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
@@ -143,13 +163,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUserResponse'
+                $ref: '#/components/schemas/UserResponse'
         400:
           description: Invalid user supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
         404:
           description: User not found
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
@@ -163,7 +189,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUserRequest'
+              $ref: '#/components/schemas/AdminRegistrationRequest'
         required: true
       responses:
         200:
@@ -171,20 +197,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminUserResponse'
+                $ref: '#/components/schemas/UserResponse'
         400:
           description: Invalid user supplied
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
         404:
           description: User not found
-          content: { }
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ jhipster, email, profile ]
         - openId: [ jhipster, email, profile ]
   /api/register:
     post:
       tags:
-        - account-resource
+        - register-resource
       summary: Managed User Registration
       operationId: registerAccount
       requestBody:
@@ -197,6 +229,10 @@ paths:
       responses:
         200:
           description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
         400:
           description: Invalid information supplied
           content:
@@ -513,9 +549,6 @@ components:
         - phone
         - address
       properties:
-        id:
-          type: integer
-          format: int64
         login:
           type: string
           example: omens
@@ -538,6 +571,25 @@ components:
           type: string
           example: 5 Zimesfield Street, Lagos
 
+    RegistrationResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: base64
+        login:
+          type: string
+          example: omens
+        firstName:
+          type: string
+          example: Omens
+        lastName:
+          type: string
+          example: Odinaka
+        email:
+          type: string
+          example: test@test
+
     PublicUserResponse:
       type: object
       properties:
@@ -548,7 +600,7 @@ components:
           type: string
           example: omens
 
-    AdminUserResponse:
+    UserResponse:
       type: object
       properties:
         uuid:
@@ -600,7 +652,7 @@ components:
             - inactive
             - deleted
             - suspended
-    AdminUserRequest:
+    AdminRegistrationRequest:
       type: object
       required:
         - login
@@ -644,50 +696,7 @@ components:
             - active
             - inactive
             - suspended
-    UserResponse:
-      type: object
-      required:
-        - login
-        - firstName
-        - lastName
-        - email
-        - password
-        - phone
-        - address
-      properties:
-        id:
-          type: integer
-          format: int64
-        login:
-          type: string
-          example: omens
-        firstName:
-          type: string
-          example: Omens
-        lastName:
-          type: string
-          example: Odinaka
-        email:
-          type: string
-          example: test@test
-        password:
-          type: string
-          example: qazwsx
-        phone:
-          type: string
-          example: 07012345678
-        address:
-          $ref: '#/components/schemas/Address'
-        authorities:
-          type: array
-          items:
-            type: string
-        userStatus:
-          type: string
-          enum:
-            - active
-            - inactive
-            - suspended
+
     Member:
       type: object
       required:
