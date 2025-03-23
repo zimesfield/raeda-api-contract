@@ -525,8 +525,16 @@ components:
         phone:
           type: string
           example: 07012345678
+        dayOfBirth:
+          type: string
+          example: 5
+        monthOfBirth:
+          type: string
+          enum: [ January,February,March,April,May,June,July,August,September,October,November,December ]
+          example: January
         address:
-          $ref: '#/components/schemas/Address'
+          type: string
+          example: 5 Aiyetoro Street, Lagos
         authorities:
           type: array
           items:
@@ -649,7 +657,15 @@ components:
           type: string
           example: "2021-09-07"
         address:
-          $ref: '#/components/schemas/Address'
+          type: string
+          example: 5 Aiyetoro Street, Lagos
+        dayOfBirth:
+          type: string
+          example: 5
+        monthOfBirth:
+          type: string
+          enum: [ January,February,March,April,May,June,July,August,September,October,November,December ]
+          example: January
         authorities:
           type: array
           items:
