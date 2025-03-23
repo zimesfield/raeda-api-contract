@@ -359,6 +359,7 @@ components:
         rememberMe:
           type: boolean
           example: true
+          default: false
       required:
         - username
         - password
