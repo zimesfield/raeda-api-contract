@@ -192,17 +192,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/RegistrationRequest'
         required: true
       responses:
         200:
           description: successful operation
         400:
-          description: Invalid user supplied
-          content: { }
-        404:
-          description: User not found
-          content: { }
+          description: Invalid information supplied
+          content:
+            application/problem+json:
+              schema:
+                $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
       security:
         - oauth: [ ]
         - openId: [ ]
