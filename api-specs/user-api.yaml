@@ -548,6 +548,8 @@ components:
         - password
         - phone
         - address
+        - dayOfBirth
+        - monthOfBirth
       properties:
         login:
           type: string
@@ -570,6 +572,13 @@ components:
         address:
           type: string
           example: 5 Zimesfield Street, Lagos
+        dayOfBirth:
+          type: string
+          example: 5
+        monthOfBirth:
+          type: string
+          enum: [January,February,March,April,May,June,July,August,September,October,November,December]
+          example: January
 
     RegistrationResponse:
       type: object
