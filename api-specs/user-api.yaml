@@ -571,9 +571,6 @@ components:
         email:
           type: string
           example: test@test
-        password:
-          type: string
-          example: qazwsx
         phone:
           type: string
           example: 07012345678
