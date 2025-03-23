@@ -61,7 +61,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
     delete:
       tags:
         - user-resource
@@ -86,7 +86,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
 
   /api/activate:
     get:
@@ -130,7 +130,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
 
   /api/account:
     get:
@@ -153,7 +153,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
     post:
       tags:
         - account-resource
@@ -181,7 +181,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
   /api/register:
     post:
       tags:
@@ -206,7 +206,7 @@ paths:
           content: { }
       security:
         - oauth: [ ]
-        - openId: [ ]
+#        - openId: [ ]
 
   /api/account/change-password:
     post:
@@ -233,7 +233,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
 
   /api/account/reset-password/init:
     post:
@@ -261,7 +261,7 @@ paths:
           content: { }
       security:
         - oauth: [ ]
-        - openId: [ ]
+#        - openId: [ ]
 
   /api/account/reset-password/finish:
     post:
@@ -288,7 +288,7 @@ paths:
           content: { }
       security:
         - oauth: [ jhipster, email, profile ]
-        - openId: [ jhipster, email, profile ]
+#        - openId: [ jhipster, email, profile ]
 
 components:
   schemas:
@@ -845,17 +845,10 @@ components:
       type: oauth2
       description: OAuth2 authentication with KeyCloak
       flows:
-        authorizationCode:
+        implicit:
           authorizationUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/auth
           tokenUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/token
           scopes:
             jhipster: Jhipster specific claims
             email: Email claims
             profile: Profile claims
-    openId:
-      type: openIdConnect
-      description: OpenID Connect authentication with KeyCloak
-      openIdConnectUrl: http://localhost:9080/realms/jhipster/.well-known/openid-configuration
-security:
-  - oauth: [ jhipster, email, profile ]
-  - openId: [ jhipster, email, profile ]
