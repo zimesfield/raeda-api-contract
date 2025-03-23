@@ -34,7 +34,8 @@ tags:
     externalDocs:
       description: Find out more about our stock
       url: https://swagger.io
-
+security:
+  - oauth: [ jhipster, email, profile ]
 paths:
   /api/admin/users/{login}:
     get:
@@ -291,6 +292,18 @@ paths:
 #        - openId: [ jhipster, email, profile ]
 
 components:
+  securitySchemes:
+    oauth:
+      type: oauth2
+      description: OAuth2 authentication with KeyCloak
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/auth
+          tokenUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/token
+          scopes:
+            jhipster: Jhipster specific claims
+            email: Email claims
+            profile: Profile claims
   schemas:
     LoginRequest:
       title: LoginRequest
@@ -829,9 +842,6 @@ components:
           type: string
         message:
           type: string
-
-
-
   responses:
     Problem:
       description: error occurred - see status code and problem object for more information.
@@ -840,15 +850,4 @@ components:
           schema:
             $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
 
-  securitySchemes:
-    oauth:
-      type: oauth2
-      description: OAuth2 authentication with KeyCloak
-      flows:
-        implicit:
-          authorizationUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/auth
-          tokenUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/token
-          scopes:
-            jhipster: Jhipster specific claims
-            email: Email claims
-            profile: Profile claims
+
