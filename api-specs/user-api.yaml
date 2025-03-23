@@ -27,7 +27,7 @@ servers:
           - api.staging # Staging server
 
 tags:
-  - name: user-jwt-resource
+  - name: account-resource
     description: Login user
   - name: user-resource
     description: Operations about user
@@ -36,37 +36,6 @@ tags:
       url: https://swagger.io
 
 paths:
-  /api/authenticate:
-    post:
-      tags:
-        - user-jwt-resource
-      summary: login and generate jwt.
-      operationId: authorize
-      requestBody:
-        description: Login detail
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-        required: true
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JwtToken'
-        400:
-          description: Invalid username supplied
-          content: { }
-        404:
-          description: User not found
-          content: { }
-      security:
-        - OAuth2:
-            - scope_detail_user
-
-
   /api/admin/users/{login}:
     get:
       tags:
@@ -90,6 +59,9 @@ paths:
         400:
           description: Invalid username/password supplied
           content: { }
+      security:
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
     delete:
       tags:
         - user-resource
@@ -112,6 +84,10 @@ paths:
         400:
           description: Invalid username/password supplied
           content: { }
+      security:
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
+
   /api/activate:
     get:
       tags:
@@ -153,8 +129,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
 
   /api/account:
     get:
@@ -176,8 +152,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
     post:
       tags:
         - account-resource
@@ -204,8 +180,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
   /api/register:
     post:
       tags:
@@ -229,8 +205,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ ]
+        - openId: [ ]
 
   /api/account/change-password:
     post:
@@ -256,8 +232,9 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
+
   /api/account/reset-password/init:
     post:
       tags:
@@ -283,8 +260,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
+        - oauth: [ ]
+        - openId: [ ]
 
   /api/account/reset-password/finish:
     post:
@@ -310,39 +287,8 @@ paths:
           description: User not found
           content: { }
       security:
-        - OAuth2:
-            - scope_detail_user
-
-  /api/booking:
-    post:
-      tags:
-        - booking-resource
-      summary: Manage Booking
-      operationId: book
-      requestBody:
-        description: book an activity
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookingRequest'
-        required: true
-      responses:
-        201:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookingResponse'
-        400:
-          description: Invalid user supplied
-          content: { }
-        404:
-          description: User not found
-          content: { }
-      security:
-        - OAuth2:
-            - scope_detail_user
-
+        - oauth: [ jhipster, email, profile ]
+        - openId: [ jhipster, email, profile ]
 
 components:
   schemas:
@@ -440,139 +386,6 @@ components:
           type: integer
           example: 0
 
-    OrderRequest:
-      type: object
-      properties:
-        orderedItems:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderedItem'
-        userId:
-          type: string
-          format: base64
-        address:
-          $ref: '#/components/schemas/Address'
-    OrderResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        orderedItems:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderedItem'
-        userId:
-          type: string
-          format: base64
-        orderedOn:
-          type: string
-          format: date-time
-        address:
-          $ref: '#/components/schemas/Address'
-        complete:
-          type: boolean
-          default: false
-        status:
-          type: string
-          description: status of order
-          enum:
-            - placed
-            - accepted
-            - delivered
-            - canceled
-            - deleted
-    OrderedItem:
-      required:
-        - productId
-        - quantity
-        - account
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        uuid:
-          type: string
-          format: base64
-        productId:
-          type: string
-          format: base64
-        quantity:
-          type: integer
-          format: int32
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          enum:
-            - received
-            - processing
-            - transit
-            - completed
-            - deleted
-        complete:
-          type: boolean
-          default: false
-    CategoryRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: Home & Office
-        description:
-          type: string
-          example: This is Home & Office
-    CategoryResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          description: category status in the stock
-          enum:
-            - enabled
-            - deleted
-            - suspended
-
-    TagRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          example: NEW
-        description:
-          type: string
-          example: This are new products
-    TagResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        name:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          description: category status in the stock
-          enum:
-            - enabled
-            - deleted
-            - suspended
 
     Address:
       type: object
@@ -689,51 +502,6 @@ components:
             - active
             - inactive
             - suspended
-
-    BookingRequest:
-      type: object
-      required:
-        - firstName
-        - lastName
-        - phone
-        - address
-      properties:
-        firstName:
-          type: string
-          example: Omens
-        lastName:
-          type: string
-          example: Odinaka
-        married:
-          type: string
-          enum:
-            - married
-            - single
-            - divorced
-        spouseName:
-          type: string
-          example: Obie
-        children:
-          type: array
-          items:
-            type: string
-        email:
-          type: string
-          example: test@test
-        phone:
-          type: string
-          example: 07012345678
-        address:
-          $ref: '#/components/schemas/Address'
-    BookingResponse:
-      type: object
-      properties:
-        accountId:
-          type: string
-          example: 12345678
-        phone:
-          type: string
-          example: 07012345678
 
     PublicUserResponse:
       type: object
@@ -928,223 +696,7 @@ components:
         - divorced
       example: married
 
-    ProductRequest:
-      required:
-        - brandId
-        - promotionIds
-        - categoryId
-        - name
-        - description
-        - detail
-        - weight
-        - price
-      type: object
-      properties:
-        categoryId:
-          type: string
-          format: base64
-          example: b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
-        promotionIds:
-          type: array
-          items:
-            type: string
-            format: base64
-          example:
-            - b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
-        tagIds:
-          type: array
-          items:
-            type: string
-            format: base64
-          example:
-            - b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
-        brandId:
-          type: string
-          format: base64
-          example: b82a1ed4-3a2b-4cd1-ba3c-d1a76872ae88
-        name:
-          type: string
-          example: Milo
-        code:
-          type: string
-          example: 12345
-        weight:
-          type: number
-          format: float
-          example: 10.2
-        price:
-          $ref: "#/components/schemas/Money"
-        description:
-          type: string
-          example: "Electronics product"
-        detail:
-          type: string
-          example: "This is a more elaborate information"
-        photoUrls:
-          type: array
-          items:
-            type: string
 
-    ProductResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        category:
-          $ref: '#/components/schemas/CategoryResponse'
-        promotions:
-          type: array
-          items:
-            $ref: '#/components/schemas/PromotionResponse'
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/TagResponse'
-        brand:
-          $ref: '#/components/schemas/BrandResponse'
-        name:
-          type: string
-          example: Zimes
-        code:
-          type: string
-          example: qazwsx
-        weight:
-          type: number
-          format: float
-          example: 10.2
-        price:
-          $ref: "#/components/schemas/Money"
-        description:
-          type: string
-          example: "Electronics product"
-        detail:
-          type: string
-          example: "This is a more elaborate information"
-        photoUrls:
-          type: array
-          items:
-            type: string
-        status:
-          type: string
-          description: pet status in the stock
-          enum:
-            - available
-            - deleted
-            - pending
-            - new
-            - sold
-            - banned
-            - out-of-stock
-    BrandRequest:
-      required:
-        - name
-        - description
-      type: object
-      properties:
-        name:
-          type: string
-          example: LG
-        description:
-          type: string
-          example: "Type of a brand"
-    BrandResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        name:
-          type: string
-          example: LG
-        description:
-          type: string
-          example: "Type of a brand"
-        status:
-          type: string
-          description: pet status in the stock
-          enum:
-            - deleted
-            - enabled
-            - suspended
-    Money:
-      type: object
-      properties:
-        currency:
-          type: string
-          maximum: 3
-          minimum: 3
-          enum:
-            - NGN
-            - GBP
-            - USD
-          example: NGN
-        value:
-          type: number
-          format: Double
-          example: 10.2
-
-    PromotionRequest:
-      required:
-        - name
-        - description
-        - price
-        - startDate
-        - endDate
-      type: object
-      properties:
-        name:
-          type: string
-          example: "3k Shop"
-        description:
-          type: string
-          example: "Promotion for 3K  purchases"
-        price:
-          $ref: "#/components/schemas/Money"
-        startDate:
-          type: string
-          #          format: date
-          example: "2021-07-12"
-        endDate:
-          type: string
-          #          format: date
-          example: "2025-07-12"
-        flatRate:
-          type: boolean
-          example: false
-
-    PromotionResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: base64
-        name:
-          type: string
-          example: "3k Shop"
-        description:
-          type: string
-          example: "Promotion for 3K  purchases"
-        price:
-          $ref: "#/components/schemas/Money"
-        start:
-          type: string
-          format: date
-          example: "02/02/2020"
-        end:
-          type: string
-          format: date
-          example: "02/02/2020"
-        flatRate:
-          type: boolean
-          example: false
-        status:
-          type: string
-          description: pet status in the stock
-          enum:
-            - deleted
-            - enabled
-            - suspended
     Account:
       title: Account
       type: object
@@ -1289,15 +841,21 @@ components:
             $ref: 'https://opensource.zalando.com/problem/schema.yaml#/Problem'
 
   securitySchemes:
-    jwt:
-      type: http
-      description: JWT Authentication
-      scheme: bearer
-      bearerFormat: JWT
-    basic:
-      type: http
-      description: Basic Authentication
-      scheme: basic
+    oauth:
+      type: oauth2
+      description: OAuth2 authentication with KeyCloak
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/auth
+          tokenUrl: http://localhost:9080/realms/jhipster/protocol/openid-connect/token
+          scopes:
+            jhipster: Jhipster specific claims
+            email: Email claims
+            profile: Profile claims
+    openId:
+      type: openIdConnect
+      description: OpenID Connect authentication with KeyCloak
+      openIdConnectUrl: http://localhost:9080/realms/jhipster/.well-known/openid-configuration
 security:
-  - jwt: []
-  - basic: []
+  - oauth: [ jhipster, email, profile ]
+  - openId: [ jhipster, email, profile ]
